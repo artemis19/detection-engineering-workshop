@@ -50,40 +50,42 @@ func (en *ExecutionNormalizer) normalize(line string) *nlpb.NormalizedLog {
 		log.Printf("invalid number of fields found; expect 9, found %d: %s\n", len(fields), line)
 		return nil
 	}
+	/*
+		// <TODO: Implement me!>
+		// Implement the validate function in validator.go file.
+		// Parse and return `timestamp` field with validateTimestamp().
+		if err != nil {
+			log.Printf("%v, skipping: %s\n", err, line)
+			return nil
+		}
 
-	// <TODO: Implement me!>
-	// Implement the validate function in validator.go file.
-	// Parse and return `timestamp` field with validateTimestamp().
-	if err != nil {
-		log.Printf("%v, skipping: %s\n", err, line)
-		return nil
-	}
+		// <TODO: Implement me!>
+		// Parse and return `uid` field with validateInt64().
+		if err != nil {
+			log.Printf("%v, skipping: %s\n", err, line)
+			return nil
+		}
 
-	// <TODO: Implement me!>
-	// Parse and return `uid` field with validateInt64().
-	if err != nil {
-		log.Printf("%v, skipping: %s\n", err, line)
-		return nil
-	}
+		// <TODO: Implement me!>
+		// Parse and return `pid` field with validateInt64().
+		if err != nil {
+			log.Printf("%v, skipping: %s\n", err, line)
+			return nil
+		}
 
-	// <TODO: Implement me!>
-	// Parse and return `pid` field with validateInt64().
-	if err != nil {
-		log.Printf("%v, skipping: %s\n", err, line)
-		return nil
-	}
+		// <TODO: Implement me!>
+		// Parse and return `ppid` field with validateInt64().
+		if err != nil {
+			log.Printf("%v, skipping: %s\n", err, line)
+			return nil
+		}
 
-	// <TODO: Implement me!>
-	// Parse and return `ppid` field with validateInt64().
-	if err != nil {
-		log.Printf("%v, skipping: %s\n", err, line)
-		return nil
-	}
+		// <TODO: Implement me!>
+		// Parse and return `platform` field with validatePlatform().
 
-	// <TODO: Implement me!>
-	// Parse and return `platform` field with validatePlatform().
-
-	// <TODO: Implement me!>
-	// Return a populated NormalizedLog proto message.
-	return &nlpb.NormalizedLog{}
+		// <TODO: Implement me!>
+		// Return a populated NormalizedLog proto message.
+		return &nlpb.NormalizedLog{}
+	*/
+	return nil
 }

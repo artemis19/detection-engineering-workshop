@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"net"
+	"strconv"
+	"time"
 
 	nlpb "github.com/bearlyrunning/FindingTheNeedle/go/generated/normalizedlogpb"
 	tspb "google.golang.org/protobuf/types/known/timestamppb"
@@ -15,7 +18,12 @@ func validateTime(s string) (*tspb.Timestamp, error) {
 	// Return error fmt.Errorf("invalid timestamp found: %s", s) if the datetime string is not valid.
 	// Hint #1: import "time".
 	// Hint #2: make use of the timestamppb package.
-	return nil, nil
+	goTime, err := time.Parse(timeFmt, s)
+	ts := tspb.New(goTime)
+	if err != nil {
+		fmt.Errorf("Invalid timestamp found: %s", s)
+	}
+	return ts, nil
 }
 
 func validateTimestamp(s string) (*tspb.Timestamp, error) {
@@ -24,7 +32,16 @@ func validateTimestamp(s string) (*tspb.Timestamp, error) {
 	// Return error fmt.Errorf("unexpected timestamp found: %s", s) if the timestamp string is not valid.
 	// Fix the placeholder return below.
 	// Hint #1: what field(s) does the Timestamp proto message contain?
-	return nil, nil
+	intTime, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		fmt.Errorf("Error converting string to int for validateTimestamp: %v", err)
+	}
+	goTime := time.Unix(intTime, 0)
+	ts := tspb.New(goTime)
+	if err != nil {
+		fmt.Errorf("Invalid timestamp found: %s", s)
+	}
+	return ts, nil
 }
 
 func validateIP(s string) (string, error) {
@@ -32,7 +49,11 @@ func validateIP(s string) (string, error) {
 	// Confirm the IP string contains a valid IP address.
 	// Return back the valid IP.
 	// Return error fmt.Errorf("invalid IP found: %s", s) if the IP is not valid.
-	return "", nil
+	ipAddress := net.ParseIP(s)
+	if ipAddress.String() == "" {
+		fmt.Errorf("Invalid IP found: %s", s)
+	}
+	return ipAddress.String(), nil
 }
 
 func validatePort(s string) (int32, error) {
@@ -45,7 +66,7 @@ func validatePort(s string) (int32, error) {
 
 func validateQuery(s string) (string, error) {
 	if s == "" {
-		return "", fmt.Errorf("empty query found")
+		return "", fmt.Errorf("Empty query found")
 	}
 	return s, nil
 }
