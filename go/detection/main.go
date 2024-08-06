@@ -108,7 +108,7 @@ func output(name string, sigs []*spb.Signal) error {
 	path := fmt.Sprintf(signalPath, name)
 	out, err := os.Create(path)
 	if err != nil {
-		return fmt.Errorf("failed to create output file %s: %s", path, err)
+		fmt.Errorf("failed to create output file %s: %s", path, err)
 	}
 	defer out.Close()
 	w := bufio.NewWriter(out)
@@ -117,7 +117,7 @@ func output(name string, sigs []*spb.Signal) error {
 	for _, s := range sigs {
 		j, err := protojson.Marshal(s)
 		if err != nil {
-			return fmt.Errorf("failed converting log message to json format %v: %v", s, err)
+			fmt.Errorf("failed converting log message to json format %v: %v", s, err)
 		}
 		w.Write(j)
 		w.WriteString("\n")

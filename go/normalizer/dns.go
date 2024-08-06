@@ -67,17 +67,26 @@ func (dn *DNSNormalizer) normalize(line string) *nlpb.NormalizedLog {
 		return nil
 	}
 	fmt.Printf("Validated DNS Query is %v\n", validatedQuery)
-	/*
-		// <TODO: Implement me!>
-		// Parse and return `return_code` field with validateReturnCode().
-		if err != nil {
-			log.Printf("%v, skipping: %s\n", err, line)
-			return nil
-		}
 
-		// <TODO: Implement me!>
-		// Return a populated NormalizedLog proto message.
-	*/
-	// return &nlpb.NormalizedLog{}
+	code, err := validateReturnCode(fields[7])
+	if err != nil {
+		log.Printf("%v, skipping: %s\n", err, line)
+		return nil
+	}
+
+	return &nlpb.NormalizedLog{
+		Msg: &nlpb.NormalizedLog_DnsLog{
+			DnsLog: &nlpb.DNS{
+				Timestamp:  validatedTime,
+				SourceIp:   validatedSrcIP,
+				ResolverIp: validatedResolverIP,
+				Query:      validatedQuery,
+				Type:       fields[5],
+				Answer:     fields[6],
+				ReturnCode: code,
+				LogSource:  fields[1],
+			},
+		},
+	}
 	return nil
 }

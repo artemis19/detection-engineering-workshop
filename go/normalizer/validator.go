@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"strconv"
+	"strings"
 	"time"
 
 	nlpb "github.com/bearlyrunning/FindingTheNeedle/go/generated/normalizedlogpb"
@@ -27,21 +29,12 @@ func validateTime(s string) (*tspb.Timestamp, error) {
 }
 
 func validateTimestamp(s string) (*tspb.Timestamp, error) {
-	// <TODO: Implement me!>
-	// Parse a epoch timestamp string to a Timestamp proto message.
-	// Return error fmt.Errorf("unexpected timestamp found: %s", s) if the timestamp string is not valid.
-	// Fix the placeholder return below.
-	// Hint #1: what field(s) does the Timestamp proto message contain?
-	intTime, err := strconv.ParseInt(s, 10, 64)
+	ts, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
-		fmt.Errorf("Error converting string to int for validateTimestamp: %v", err)
+		return nil, fmt.Errorf("unexpected timestamp found: %s", s)
 	}
-	goTime := time.Unix(intTime, 0)
-	ts := tspb.New(goTime)
-	if err != nil {
-		fmt.Errorf("Invalid timestamp found: %s", s)
-	}
-	return ts, nil
+	// Other checks that could be implemented: check if timestamp is not in the future or too far in the past.
+	return &tspb.Timestamp{Seconds: ts}, nil
 }
 
 func validateIP(s string) (string, error) {
@@ -57,11 +50,11 @@ func validateIP(s string) (string, error) {
 }
 
 func validatePort(s string) (int32, error) {
-	// <TODO: Implement me!>
-	// Convert port strings to int32.
-	// Confirm the string is a valid port number.
-	// Return error fmt.Errorf("unexpected port number found: %s", s) if the port is not valid.
-	return int32(0), nil
+	port, err := strconv.ParseInt(s, 10, 32)
+	if err != nil || port < 0 || port > 65535 {
+		return 0, fmt.Errorf("unexpected port number found: %s", s)
+	}
+	return int32(port), nil
 }
 
 func validateQuery(s string) (string, error) {
@@ -72,26 +65,27 @@ func validateQuery(s string) (string, error) {
 }
 
 func validateReturnCode(s string) (nlpb.DNS_ReturnCode, error) {
-	// <TODO: Implement me!>
-	// Convert return code to proto ENUM nlpb.DNS_ReturnCode.
-	// Confirm the string is a valid return code (hint: check the range of the enum).
-	// Return error fmt.Errorf("unexpected return code found: %s", s) if the code is not valid.
-	// Don't forget to increment return code by 1 as the enum value 0 is reserved for default value (e.g. unspecified) only.
-	// Hint: check the auto-generated normalizedlogpb package for suitable conversion approach.
-	return nlpb.DNS_UNSPECIFIED, nil
+	code, err := strconv.ParseInt(s, 10, 32)
+	if err != nil || code > 9 {
+		return 0, fmt.Errorf("Unexpected return code found: %s", s)
+	}
+	// Increment return code by 1 as the enum value 0 is reserved for default value (e.g. unspecified) only.
+	return nlpb.DNS_ReturnCode(int32(code + 1)), nil
 }
 
 func validateInt64(s string) (int64, error) {
-	// <TODO: Implement me!>
-	// Convert number string to int64.
-	// Return error fmt.Errorf("unexpected string found, expecting int64: %s", s) if the string is not a valid int64.
-	return 0, nil
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("Unexpected string found, expecting int64: %s", s)
+	}
+	return i, nil
 }
 
 func validatePlatform(s string) nlpb.Execution_Platform {
-	// <TODO: Implement me!>
-	// Convert platform string to Platform ENUM.
-	// If the platform string is not valid, set to default nlpb.Execution_Platform(0).
-	// Hint: check the auto-generated normalizedlogpb package for suitable conversion approach.
-	return nlpb.Execution_UNSPECIFIED
+	p, ok := nlpb.Execution_Platform_value[strings.Trim(s, "\"")]
+	if !ok {
+		log.Printf("Invalid platform %s found, set to default", s)
+		return nlpb.Execution_Platform(0)
+	}
+	return nlpb.Execution_Platform(p)
 }
